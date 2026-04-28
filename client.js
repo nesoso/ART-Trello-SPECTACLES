@@ -12,7 +12,7 @@ TrelloPowerUp.initialize({
       callback: function(t) {
         return t.modal({
           url: 'https://nesoso.github.io/ART-Trello-SPECTACLES/',
-          title: 'Tableau Spectacles S26/27',
+          title: 'Tableau Spectacles',
           fullscreen: true
         });
       }
