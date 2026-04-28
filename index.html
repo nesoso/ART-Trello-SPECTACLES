@@ -7,11 +7,9 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: Arial, sans-serif; background: #f7f5f2; color: #1a1a1a; }
-  
   header { background: #1a1a1a; color: #f7f5f2; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
   header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
   header span { font-size: 13px; color: #aaa; }
-
   .toolbar { padding: 12px 24px; display: flex; gap: 10px; align-items: center; background: #fff; border-bottom: 1px solid #e0e0e0; }
   .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
   .btn-primary { background: #e8424a; color: white; }
@@ -20,37 +18,24 @@
   .btn-secondary:hover { background: #e0e0e0; }
   .btn-success { background: #2e7d32; color: white; }
   .btn-success:hover { background: #1b5e20; }
-
   .table-container { padding: 24px; overflow-x: auto; }
-  
   table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); font-size: 13px; }
-  
   thead tr { background: #1a1a1a; color: #f7f5f2; }
   thead th { padding: 12px 10px; text-align: left; font-size: 12px; font-weight: 600; white-space: nowrap; border-right: 1px solid #333; }
   thead th:first-child { width: 40px; text-align: center; }
-  
   tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
   tbody tr:hover { background: #fafafa; }
   tbody tr.selected { background: #fff3f3; }
-  
   td { padding: 8px 10px; vertical-align: top; border-right: 1px solid #f0f0f0; min-width: 100px; }
   td:first-child { text-align: center; width: 40px; min-width: 40px; }
   td[contenteditable="true"] { outline: none; cursor: text; }
   td[contenteditable="true"]:focus { background: #fffbe6; box-shadow: inset 0 0 0 2px #e8424a; border-radius: 2px; }
-
   td.nom-spectacle { font-weight: 600; min-width: 160px; }
   td.remarques { min-width: 200px; color: #e8424a; }
-
   .empty-state { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
-
   .counter { font-size: 13px; color: #666; margin-left: auto; }
-
-  .badge-oui { background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
-  .badge-non { background: #fce4e4; color: #c62828; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
-
   .saved-msg { font-size: 12px; color: #2e7d32; opacity: 0; transition: opacity 0.3s; margin-left: 10px; }
   .saved-msg.show { opacity: 1; }
-
   @media print {
     header, .toolbar { display: none; }
     .table-container { padding: 0; }
@@ -96,8 +81,7 @@
         <th>Remarques importantes</th>
       </tr>
     </thead>
-    <tbody id="tableBody">
-    </tbody>
+    <tbody id="tableBody"></tbody>
   </table>
 </div>
 
@@ -128,10 +112,10 @@ function loadData() {
   } else {
     data = [
       { nom: 'UNE VENUS DE 5743 ANS', dates: 'Jeu. 24 sept. 20h30 / Sam. 26 sept. 18h', creation: '', dateCreation: '22/23', video: 'non', photo: 'oui', copyright: '© ocsikytrnka', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: 'Résidence : 14-23 Septembre 2026 · Union' },
-      { nom: 'REBELLES EN EXIL - GR12', dates: 'Mar. 29 sept. 15h30 / Mer. 30 sept. 18h', creation: 'Théâtre du Point du Jour Lyon', dateCreation: '2026', video: '', photo: 'Non', copyright: '', duree: '1h15', ages: '14', tournee: 'Premier semestre 2026 - Conception et écriture\nSeptembre 2026 - Résidences au Théâtre du Point du Jour, Lyon (69) et au Théâtre de Bellac (87)\nSeptembre-Octobre 2026 - Création dans le cadre des Francophonie, festival Les Zébrures d\'automnes, Théâtre de Bellac (87)\nAutomne 2026 - Théâtre du Point du Jour, Lyon (69)', dossier: 'Dossier prod', contact: '', reponse: '', remarques: '' },
-      { nom: 'DANS LA MAISON DE L\'OGRE', dates: 'Mar. 3 nov. 19h / Mer. 4 nov. 19h / Jeu. 5 nov. 10h et 14h', creation: '', dateCreation: '', video: 'non', photo: 'non', copyright: 'illustration Pascal Gelmi', duree: '', ages: '10', tournee: 'Théâtre des Îlets - Montluçon 13-15 oct. 2026\nThéâtre Antoine Vitez - Ivry 27-28 nov. 2026\nScène Nationale Bourg en Bresse 3-4 déc. 2026\nLa Coloc à Cournon 10-11 déc. 2026', dossier: '', contact: '', reponse: '', remarques: '' },
+      { nom: 'REBELLES EN EXIL - GR12', dates: 'Mar. 29 sept. 15h30 / Mer. 30 sept. 18h', creation: 'Théâtre du Point du Jour Lyon', dateCreation: '2026', video: '', photo: 'Non', copyright: '', duree: '1h15', ages: '14', tournee: 'Premier semestre 2026 - Conception et écriture\nSeptembre 2026 - Résidences au Théâtre du Point du Jour, Lyon (69) et au Théâtre de Bellac (87)\nSeptembre-Octobre 2026 - Création dans le cadre des Francophonie\nAutomne 2026 - Théâtre du Point du Jour, Lyon (69)', dossier: 'Dossier prod', contact: '', reponse: '', remarques: '' },
+      { nom: "DANS LA MAISON DE L'OGRE", dates: 'Mar. 3 nov. 19h / Mer. 4 nov. 19h / Jeu. 5 nov. 10h et 14h', creation: '', dateCreation: '', video: 'non', photo: 'non', copyright: 'illustration Pascal Gelmi', duree: '', ages: '10', tournee: 'Théâtre des Îlets - Montluçon 13-15 oct. 2026\nThéâtre Antoine Vitez - Ivry 27-28 nov. 2026\nScène Nationale Bourg en Bresse 3-4 déc. 2026\nLa Coloc à Cournon 10-11 déc. 2026', dossier: '', contact: '', reponse: '', remarques: '' },
       { nom: 'PETROLE', dates: 'Ven. 20 nov. 19h / Sam. 21 nov. 18h', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
-      { nom: 'LA GUERRE N\'A PAS UN VISAGE DE FEMME', dates: 'Mar. 24 nov. 20h / Mer. 25 nov. 20h / Jeu. 26 nov. 19h', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
+      { nom: "LA GUERRE N'A PAS UN VISAGE DE FEMME", dates: 'Mar. 24 nov. 20h / Mer. 25 nov. 20h / Jeu. 26 nov. 19h', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
       { nom: 'VALERIE CHANE TEF', dates: 'Dim. 29 nov. 14h30', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
       { nom: 'QUAND LA VILLE SE LÈVE', dates: 'Mer. 2 déc. 20h / Jeu. 3 déc. 19h / Ven. 4 déc. 19h', creation: 'Nouveau Relax, Chaumont', dateCreation: 'janvier 2026', video: 'Oui', photo: 'Simon Gosselin', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: 'Gabrielle Dupas - gabrielle@chairdumonde.fr - 06 88 46 74 68\nFatou Radix - fatou@chairdumonde.fr - 06 35 42 36 46\nRomane Bricard - romane@chairdumonde.fr - 06 76 60 11 80\nCharlotte Lagrange - charlotte@chairdumonde.fr - 06 85 74 16 61', reponse: '', remarques: '' },
       { nom: 'SOIREE RAPHAELLE BOITEL - ESTU - ARTCENA', dates: 'Mer. 9 déc. 19h', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
@@ -142,7 +126,7 @@ function loadData() {
       { nom: 'ANG - TOI TU NE JOUERAS PAS JULIETTE', dates: 'Sam. 23 janv. / Dim. 24 janv.', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
       { nom: 'MA REPUBLIQUE ET MOI', dates: 'Mar. 2 fév. / Mer. 3 fév. / Jeu. 4 fév.', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
       { nom: 'COMME TU ME VOIS', dates: 'Ven. 5 fév.', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
-      { nom: 'PAPY QUICHOTTE', dates: 'Mar. 2 mars 14h / Mer. 3 mars 19h / Jeu. 4 mars 10h et 14h', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: 'Théâtre d\'Angoulême 8-10 mars\nL\'Empreinte - Brive-Tulle 17-18 mars\nGallia Saintes 22-23 mars\nL\'Agora Billère 26 mars\nLa Machinerie Vénissieux 31 mars-2 avril\nL\'Avant Seine Colombes 23 avril\nThéâtre de Sartrouville 4 et 10 mai', dossier: '', contact: '', reponse: '', remarques: '' },
+      { nom: 'PAPY QUICHOTTE', dates: 'Mar. 2 mars 14h / Mer. 3 mars 19h / Jeu. 4 mars 10h et 14h', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: "Théâtre d'Angoulême 8-10 mars\nL'Empreinte - Brive-Tulle 17-18 mars\nGallia Saintes 22-23 mars\nL'Agora Billère 26 mars\nLa Machinerie Vénissieux 31 mars-2 avril\nL'Avant Seine Colombes 23 avril\nThéâtre de Sartrouville 4 et 10 mai", dossier: '', contact: '', reponse: '', remarques: '' },
       { nom: 'JEAN ROMUALD UN GARCON DE SON AGE', dates: 'Mer. 17 mars 20h / Jeu. 18 mars 20h', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
       { nom: 'RABBIT HOLE', dates: 'Mar. 23 mars 19h / Mer. 24 mars 20h / Jeu. 25 mars 14h', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
       { nom: 'GARCON COIFFEUR', dates: 'Mar. 27 avril / Mer. 28 avril / Jeu. 29 avril', creation: '', dateCreation: '', video: '', photo: '', copyright: '', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
@@ -159,28 +143,25 @@ function loadData() {
 function renderTable() {
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = '';
-  
   if (data.length === 0) {
     tbody.innerHTML = `<tr><td colspan="15" class="empty-state">Aucun spectacle — cliquez sur "+ Ajouter un spectacle"</td></tr>`;
     document.getElementById('counter').textContent = '0 spectacle(s)';
     return;
   }
-
   data.forEach((row, i) => {
     const tr = document.createElement('tr');
     tr.dataset.index = i;
-
     const tdCheck = document.createElement('td');
     const cb = document.createElement('input');
     cb.type = 'checkbox';
     cb.onchange = () => tr.classList.toggle('selected', cb.checked);
     tdCheck.appendChild(cb);
     tr.appendChild(tdCheck);
-
     COLS.forEach(col => {
       const td = document.createElement('td');
       td.contentEditable = true;
-      td.textContent = row[col.key] || '';
+      td.style.whiteSpace = 'pre-wrap';
+      td.innerText = row[col.key] || '';
       if (col.class) td.className = col.class;
       td.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
@@ -189,15 +170,13 @@ function renderTable() {
         }
       });
       td.addEventListener('input', () => {
-        data[i][col.key] = td.innerHTML;
+        data[i][col.key] = td.innerText;
       });
       td.addEventListener('blur', () => saveData(true));
       tr.appendChild(td);
     });
-
     tbody.appendChild(tr);
   });
-
   document.getElementById('counter').textContent = `${data.length} spectacle(s)`;
 }
 
@@ -217,7 +196,7 @@ function addRow() {
 
 function deleteSelected() {
   const checkboxes = document.querySelectorAll('#tableBody input[type="checkbox"]:checked');
-  if (checkboxes.length === 0) { alert('Sélectionne d\'abord une ligne.'); return; }
+  if (checkboxes.length === 0) { alert("Sélectionne d'abord une ligne."); return; }
   if (!confirm(`Supprimer ${checkboxes.length} spectacle(s) ?`)) return;
   const toDelete = Array.from(checkboxes).map(cb => parseInt(cb.closest('tr').dataset.index));
   data = data.filter((_, i) => !toDelete.includes(i));
