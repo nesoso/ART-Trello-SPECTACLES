@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tableau Spectacles — Théâtre de l'Union S26/27</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f7f5f2; color: #1a1a1a; }
+  
+  header { background: #1a1a1a; color: #f7f5f2; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header span { font-size: 13px; color: #aaa; }
+
+  .toolbar { padding: 12px 24px; display: flex; gap: 10px; align-items: center; background: #fff; border-bottom: 1px solid #e0e0e0; }
+  .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
+  .btn-primary { background: #e8424a; color: white; }
+  .btn-primary:hover { background: #c0353c; }
+  .btn-secondary { background: #f0f0f0; color: #1a1a1a; }
+  .btn-secondary:hover { background: #e0e0e0; }
+  .btn-success { background: #2e7d32; color: white; }
+  .btn-success:hover { background: #1b5e20; }
+
+  .table-container { padding: 24px; overflow-x: auto; }
+  
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); font-size: 13px; }
+  
+  thead tr { background: #1a1a1a; color: #f7f5f2; }
+  thead th { padding: 12px 10px; text-align: left; font-size: 12px; font-weight: 600; white-space: nowrap; border-right: 1px solid #333; }
+  thead th:first-child { width: 40px; text-align: center; }
+  
+  tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
+  tbody tr:hover { background: #fafafa; }
+  tbody tr.selected { background: #fff3f3; }
+  
+  td { padding: 8px 10px; vertical-align: top; border-right: 1px solid #f0f0f0; min-width: 100px; }
+  td:first-child { text-align: center; width: 40px; min-width: 40px; }
+  td[contenteditable="true"] { outline: none; cursor: text; }
+  td[contenteditable="true"]:focus { background: #fffbe6; box-shadow: inset 0 0 0 2px #e8424a; border-radius: 2px; }
+
+  td.nom-spectacle { font-weight: 600; min-width: 160px; }
+  td.remarques { min-width: 200px; color: #e8424a; }
+
+  .empty-state { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
+
+  .counter { font-size: 13px; color: #666; margin-left: auto; }
+
+  .badge-oui { background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .badge-non { background: #fce4e4; color: #c62828; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+
+  .saved-msg { font-size: 12px; color: #2e7d32; opacity: 0; transition: opacity 0.3s; margin-left: 10px; }
+  .saved-msg.show { opacity: 1; }
+
+  @media print {
+    header, .toolbar { display: none; }
+    .table-container { padding: 0; }
+    table { box-shadow: none; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎭 Tableau Spectacles — Théâtre de l'Union S26/27</h1>
+  <span>ART — Anticipation des Rôles et des Temporalités</span>
+</header>
+
+<div class="toolbar">
+  <button class="btn btn-primary" onclick="addRow()">+ Ajouter un spectacle</button>
+  <button class="btn btn-secondary" onclick="deleteSelected()">🗑 Supprimer la sélection</button>
+  <button class="btn btn-success" onclick="saveData()">💾 Sauvegarder</button>
+  <button class="btn btn-secondary" onclick="exportCSV()">⬇ Exporter CSV</button>
+  <button class="btn btn-secondary" onclick="window.print()">🖨 Imprimer</button>
+  <span class="saved-msg" id="savedMsg">✅ Sauvegardé !</span>
+  <span class="counter" id="counter">0 spectacle(s)</span>
+</div>
+
+<div class="table-container">
+  <table id="spectaclesTable">
+    <thead>
+      <tr>
+        <th>☑</th>
+        <th>Nom du spectacle</th>
+        <th>Date(s) de représentation</th>
+        <th>Création</th>
+        <th>Date de création</th>
+        <th>Vidéo</th>
+        <th>Photo</th>
+        <th>Copyright photo</th>
+        <th>Durée</th>
+        <th>Âges préconisés</th>
+        <th>Dates de tournée</th>
+        <th>Dossier presse</th>
+        <th>Contact</th>
+        <th>Réponse mail</th>
+        <th>Remarques importantes</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+    </tbody>
+  </table>
+</div>
+
+<script>
+const COLS = [
+  { key: 'nom', label: 'Nom', class: 'nom-spectacle' },
+  { key: 'dates', label: 'Dates' },
+  { key: 'creation', label: 'Création' },
+  { key: 'dateCreation', label: 'Date création' },
+  { key: 'video', label: 'Vidéo' },
+  { key: 'photo', label: 'Photo' },
+  { key: 'copyright', label: 'Copyright' },
+  { key: 'duree', label: 'Durée' },
+  { key: 'ages', label: 'Âges' },
+  { key: 'tournee', label: 'Tournée' },
+  { key: 'dossier', label: 'Dossier' },
+  { key: 'contact', label: 'Contact' },
+  { key: 'reponse', label: 'Réponse' },
+  { key: 'remarques', label: 'Remarques', class: 'remarques' }
+];
+
+let data = [];
+
+function loadData() {
+  const saved = localStorage.getItem('spectacles_art');
+  if (saved) {
+    data = JSON.parse(saved);
+  } else {
+    data = [
+      { nom: 'Une Vénus de 5743 ans', dates: 'Jeu. 24 sept. 20h30 / Sam. 26 sept. 18h', creation: '22/23', dateCreation: '', video: 'non', photo: 'oui', copyright: 'ocsikytrnka', duree: '', ages: '', tournee: '', dossier: '', contact: '', reponse: '', remarques: '' },
+      { nom: 'Rebelles en exil — GR12', dates: 'Mar. 29 sept. 15h30 / Mer. 30 sept. 18h', creation: '2026', dateCreation: '', video: '', photo: '', copyright: '', duree: '1h15', ages: '14', tournee: 'Sept-oct 2026 - Théâtre de Bellac', dossier: '', contact: '', reponse: '', remarques: '' },
+      { nom: 'Dans la maison de l\'ogre', dates: '3-5 nov.', creation: '', dateCreation: '', video: 'non', photo: 'non', copyright: 'illustration Pascal Gelmi', duree: '', ages: '10', tournee: 'au théâtre des Îlets - Montluçon', dossier: '', contact: '', reponse: '', remarques: '' },
+    ];
+  }
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  
+  if (data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="15" class="empty-state">Aucun spectacle — cliquez sur "+ Ajouter un spectacle"</td></tr>`;
+    document.getElementById('counter').textContent = '0 spectacle(s)';
+    return;
+  }
+
+  data.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    tr.dataset.index = i;
+
+    const tdCheck = document.createElement('td');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.onchange = () => tr.classList.toggle('selected', cb.checked);
+    tdCheck.appendChild(cb);
+    tr.appendChild(tdCheck);
+
+    COLS.forEach(col => {
+      const td = document.createElement('td');
+      td.contentEditable = true;
+      td.textContent = row[col.key] || '';
+      if (col.class) td.className = col.class;
+      td.addEventListener('input', () => {
+        data[i][col.key] = td.textContent;
+      });
+      td.addEventListener('blur', () => saveData(true));
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('counter').textContent = `${data.length} spectacle(s)`;
+}
+
+function addRow() {
+  const empty = {};
+  COLS.forEach(c => empty[c.key] = '');
+  data.push(empty);
+  renderTable();
+  saveData(true);
+  const rows = document.querySelectorAll('#tableBody tr');
+  const lastRow = rows[rows.length - 1];
+  if (lastRow) {
+    const firstCell = lastRow.querySelectorAll('td')[1];
+    if (firstCell) firstCell.focus();
+  }
+}
+
+function deleteSelected() {
+  const checkboxes = document.querySelectorAll('#tableBody input[type="checkbox"]:checked');
+  if (checkboxes.length === 0) { alert('Sélectionne d\'abord une ligne.'); return; }
+  if (!confirm(`Supprimer ${checkboxes.length} spectacle(s) ?`)) return;
+  const toDelete = Array.from(checkboxes).map(cb => parseInt(cb.closest('tr').dataset.index));
+  data = data.filter((_, i) => !toDelete.includes(i));
+  renderTable();
+  saveData(true);
+}
+
+function saveData(silent = false) {
+  localStorage.setItem('spectacles_art', JSON.stringify(data));
+  if (!silent) {
+    const msg = document.getElementById('savedMsg');
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 2000);
+  }
+}
+
+function exportCSV() {
+  const headers = COLS.map(c => c.label).join(';');
+  const rows = data.map(row => COLS.map(c => `"${(row[c.key] || '').replace(/"/g, '""')}"`).join(';'));
+  const csv = [headers, ...rows].join('\n');
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'spectacles_S26-27.csv';
+  a.click();
+}
+
+loadData();
+</script>
+</body>
+</html>
