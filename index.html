@@ -10,7 +10,7 @@
   header { background: #1a1a1a; color: #f7f5f2; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
   header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
   header span { font-size: 13px; color: #aaa; }
-  .toolbar { padding: 12px 24px; display: flex; gap: 10px; align-items: center; background: #fff; border-bottom: 1px solid #e0e0e0; }
+  .toolbar { padding: 12px 24px; display: flex; gap: 10px; align-items: center; background: #fff; border-bottom: 1px solid #e0e0e0; flex-wrap: wrap; }
   .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
   .btn-primary { background: #e8424a; color: white; }
   .btn-primary:hover { background: #c0353c; }
@@ -22,16 +22,21 @@
   table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); font-size: 13px; }
   thead tr { background: #1a1a1a; color: #f7f5f2; }
   thead th { padding: 12px 10px; text-align: left; font-size: 12px; font-weight: 600; white-space: nowrap; border-right: 1px solid #333; }
-  thead th:first-child { width: 40px; text-align: center; }
+  thead th:first-child { width: 60px; text-align: center; }
   tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
   tbody tr:hover { background: #fafafa; }
   tbody tr.selected { background: #fff3f3; }
+  tbody tr.dragging { opacity: 0.4; background: #e8f5e9; }
+  tbody tr.drag-over { border-top: 3px solid #e8424a; }
   td { padding: 8px 10px; vertical-align: top; border-right: 1px solid #f0f0f0; min-width: 100px; }
-  td:first-child { text-align: center; width: 40px; min-width: 40px; }
+  td:first-child { text-align: center; width: 60px; min-width: 60px; }
   td[contenteditable="true"] { outline: none; cursor: text; }
   td[contenteditable="true"]:focus { background: #fffbe6; box-shadow: inset 0 0 0 2px #e8424a; border-radius: 2px; }
   td.nom-spectacle { font-weight: 600; min-width: 160px; }
   td.remarques { min-width: 200px; color: #e8424a; }
+  .drag-handle { cursor: grab; font-size: 16px; color: #aaa; user-select: none; display: inline-block; margin-right: 4px; }
+  .drag-handle:hover { color: #e8424a; }
+  .drag-handle:active { cursor: grabbing; }
   .empty-state { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
   .counter { font-size: 13px; color: #666; margin-left: auto; }
   .saved-msg { font-size: 12px; color: #2e7d32; opacity: 0; transition: opacity 0.3s; margin-left: 10px; }
@@ -40,6 +45,7 @@
     header, .toolbar { display: none; }
     .table-container { padding: 0; }
     table { box-shadow: none; font-size: 11px; }
+    .drag-handle { display: none; }
   }
 </style>
 </head>
@@ -64,7 +70,7 @@
   <table id="spectaclesTable">
     <thead>
       <tr>
-        <th>☑</th>
+        <th>⠿ ☑</th>
         <th>Nom du spectacle</th>
         <th>Date(s) de représentation</th>
         <th>Création</th>
@@ -110,6 +116,7 @@ const COLS = [
 ];
 
 let data = [];
+let dragSrcIndex = null;
 
 function loadData() {
   const saved = localStorage.getItem('spectacles_art');
@@ -157,12 +164,47 @@ function renderTable() {
   data.forEach((row, i) => {
     const tr = document.createElement('tr');
     tr.dataset.index = i;
+    tr.draggable = true;
+
+    // Drag events
+    tr.addEventListener('dragstart', (e) => {
+      dragSrcIndex = i;
+      tr.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    tr.addEventListener('dragend', () => {
+      tr.classList.remove('dragging');
+      document.querySelectorAll('#tableBody tr').forEach(r => r.classList.remove('drag-over'));
+    });
+    tr.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      document.querySelectorAll('#tableBody tr').forEach(r => r.classList.remove('drag-over'));
+      tr.classList.add('drag-over');
+    });
+    tr.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (dragSrcIndex === null || dragSrcIndex === i) return;
+      const moved = data.splice(dragSrcIndex, 1)[0];
+      data.splice(i, 0, moved);
+      dragSrcIndex = null;
+      renderTable();
+      saveData(true);
+    });
+
+    // Première cellule : handle + checkbox
     const tdCheck = document.createElement('td');
+    const handle = document.createElement('span');
+    handle.className = 'drag-handle';
+    handle.textContent = '⠿';
+    handle.title = 'Glisser pour réordonner';
     const cb = document.createElement('input');
     cb.type = 'checkbox';
     cb.onchange = () => tr.classList.toggle('selected', cb.checked);
+    tdCheck.appendChild(handle);
     tdCheck.appendChild(cb);
     tr.appendChild(tdCheck);
+
     COLS.forEach(col => {
       const td = document.createElement('td');
       td.contentEditable = true;
